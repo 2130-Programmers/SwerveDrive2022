@@ -1,10 +1,8 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -20,15 +18,18 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  public static boolean inAuto = false;
+
+  public static Timer timer;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
   public void robotInit() {
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    CameraServer.startAutomaticCapture();
   }
 
   /**
@@ -43,25 +44,13 @@ public class Robot extends TimedRobot {
    double encodedPosition;
   @Override
   public void robotPeriodic() {
+    inAuto = isAutonomous();
 
-    rawEncodedPosition = RobotContainer.driveTrain.motorFL.encoderMotor.getSelectedSensorPosition(0);
-
-    if (rawEncodedPosition >= 0)
-    {
-      encodedPosition = RobotContainer.driveTrain.motorFL.encoderMotor.getSelectedSensorPosition(0) % 4096;
-    }
-      else
-    {
-      encodedPosition = (RobotContainer.driveTrain.motorFL.encoderMotor.getSelectedSensorPosition(0) % 4096) + 4096;
-    }
-
-    SmartDashboard.putNumber("encodedPosition", encodedPosition);
+    SmartDashboard.putNumber("X", RobotContainer.limelightSub.tx.getDouble(0));
+    SmartDashboard.putNumber("Y", RobotContainer.limelightSub.y);
+    SmartDashboard.putNumber("pipe", RobotContainer.limelightSub.pipeValue);
+    SmartDashboard.putNumber("Horizontal Size", RobotContainer.limelightSub.h);
     
-    SmartDashboard.putNumber("FLRAWFKINVALUE", RobotContainer.driveTrain.motorFL.encoderMotor.getSelectedSensorPosition(0) % 4096 + 4096);
-    SmartDashboard.putNumber("FRRAWFKINVALUE", RobotContainer.driveTrain.motorFR.encoderMotor.getSelectedSensorPosition(0) % 4096 + 4096);
-    SmartDashboard.putNumber("RLRAWFKINVALUE", RobotContainer.driveTrain.motorRL.encoderMotor.getSelectedSensorPosition(0) % 4096 + 4096);
-    SmartDashboard.putNumber("RRRAWFKINVALUE", RobotContainer.driveTrain.motorRR.encoderMotor.getSelectedSensorPosition(0) % 4096 + 4096);
-
     SmartDashboard.putNumber("FL edited encoder value", RobotContainer.driveTrain.motorFL.encoderPosition);
     SmartDashboard.putNumber("FR edited encoder value", RobotContainer.driveTrain.motorFR.encoderPosition);
     SmartDashboard.putNumber("RL edited encoder value", RobotContainer.driveTrain.motorRL.encoderPosition);
@@ -82,16 +71,14 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("encoder remaining valueRL", RobotContainer.driveTrain.motorRL.encoderRemainingValue);
     SmartDashboard.putNumber("encoder remaining valueRR", RobotContainer.driveTrain.motorRR.encoderRemainingValue);
 
-    SmartDashboard.putNumber("turnPowerRatio FL", RobotContainer.driveTrain.motorFL.turnPowerRatio);
     SmartDashboard.putNumber("FlipFL ", RobotContainer.driveTrain.motorFL.flip);
     SmartDashboard.putNumber("FlipFR ", RobotContainer.driveTrain.motorFR.flip);
     SmartDashboard.putNumber("FlipRL ", RobotContainer.driveTrain.motorRL.flip);
     SmartDashboard.putNumber("FlipRR ", RobotContainer.driveTrain.motorRR.flip);
 
     SmartDashboard.putNumber("Left Joystick X", RobotContainer.driverJoy.getRawAxis(0));
-     SmartDashboard.putNumber("Left Joystick Y", RobotContainer.driverJoy.getRawAxis(1));
-     SmartDashboard.putNumber("Right Joystick X", RobotContainer.driverJoy.getRawAxis(4));  
-
+    SmartDashboard.putNumber("Left Joystick Y", RobotContainer.driverJoy.getRawAxis(1));
+    SmartDashboard.putNumber("Right Joystick X", RobotContainer.driverJoy.getRawAxis(4));  
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
@@ -110,12 +97,15 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+    timer.reset();
+    timer.start();
   }
 
   /** This function is called periodically during autonomous. */

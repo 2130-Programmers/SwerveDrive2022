@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 
-import java.security.spec.EncodedKeySpec;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -19,9 +18,9 @@ public class SwerveMotor extends SubsystemBase {
 
 
   //creating our motors and encoder
-  public TalonFX driveMotor; //controls the drive motor
-  public TalonFX rotationMotor; //controls the rotation of the unit
-  public TalonSRX encoderMotor; // for encoder
+  private TalonFX driveMotor; //controls the drive motor
+  private TalonFX rotationMotor; //controls the rotation of the unit
+  private TalonSRX encoderMotor; // for encoder
   public static double sDencoderRemainingValue = 0;
   public static double sdPointSet = 0;
   public static double sdPointSetMod = 0;
@@ -32,7 +31,7 @@ public class SwerveMotor extends SubsystemBase {
   public double flip = 0;
   public double flipMod = 0;
 
-  public static boolean testBoolean;
+  public static boolean testBoolean = true;
 
   //creating variables
   public static double rotationEncoder = 0;
@@ -177,9 +176,6 @@ else
 {
   directionMultiplier = 1;
 }
-
-
-double frontTargetRemaining = 0;
 /**
 if (encoderRemainingValue > ticksInQuarter && encoderRemainingValue < ticksInThreeQuarters) {
   if (encoderRemainingValue > ticksInQuarter && encoderRemainingValue <= ticksInHalf){

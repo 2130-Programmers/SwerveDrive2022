@@ -1,23 +1,9 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class DriveTrain extends SubsystemBase {
-  /** Creates a new DriveTrain. */
-/**
-  public double driverJoyLeftX;
-  private double driverJoyLeftY;
-  private double driverJoyRightX;
-
-  private double leftXOutput;
-  private double leftYOutput;
-  private double rightXOutput;
-*/
 
   //defining swerve units as our SwerveMotor class
   public SwerveMotor motorFL;
@@ -25,6 +11,7 @@ public class DriveTrain extends SubsystemBase {
   public SwerveMotor motorRL;
   public SwerveMotor motorRR;
 
+  //value of joysticks :)
   public double leftXOutput = 0;
   public double leftYOutput = 0;
   public double rightXOutput = 0;
@@ -48,10 +35,10 @@ public class DriveTrain extends SubsystemBase {
   {
   
     //we need to change the parameters, based off of Swolenoid
-    motorFL = new SwerveMotor(1, 2, 9);
-    motorFR = new SwerveMotor(3, 4, 10);
-    motorRL = new SwerveMotor(5, 6, 11);
-    motorRR = new SwerveMotor(7, 8, 12);
+    motorFL = new SwerveMotor(11, 12, 10);
+    motorFR = new SwerveMotor(7, 8, 4);
+    motorRL = new SwerveMotor(0, 1, 13);
+    motorRR = new SwerveMotor(5, 9, 2);
 
     //defining l by using constants, constants are good for these types of variables.
     //You can find constants in the editor right below the subsystems
@@ -148,5 +135,32 @@ public class DriveTrain extends SubsystemBase {
     motorFL.goToZero();
   }
 
+  
+  public void autonTurn(int path){
+    double turn = 0;
+
+      switch (path) {
+        case 1:
+          turn = -.5;
+          break;
+  
+        case 2:
+          turn = 0;
+          break;
+  
+        case 3:
+          turn = .5;
+          break;
+        
+        default:
+          turn = 0;
+          break;
+      }
+      moveSwerveAxis(0, 0, turn);
+    }
+
+    public void autonRun(){
+      moveSwerveAxis(.4, 0, PhotonSub.yaw*.1);
+    }
 
 }
